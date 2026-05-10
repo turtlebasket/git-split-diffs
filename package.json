@@ -37,13 +37,13 @@
     "scripts": {
         "clean": "rimraf './build'",
         "lint": "cross-env ./node_modules/.bin/eslint src scripts",
-        "build": "npm run clean && node ./scripts/build.mjs",
-        "build:dev": "npm run build -- --watch",
-        "build:publish": "npm run build -- --prod",
+        "build": "pnpm run clean && node ./scripts/build.mjs",
+        "build:dev": "pnpm run clean && node ./scripts/build.mjs --watch",
+        "build:publish": "pnpm run clean && node ./scripts/build.mjs --prod",
         "test": "cross-env ./node_modules/.bin/tsc && cross-env NODE_OPTIONS=\"--experimental-vm-modules --no-warnings\" ./node_modules/.bin/jest",
         "previewTheme": "nodemon -q build/previewTheme.mjs",
-        "benchmark": "npm run build && node build/benchmark.mjs",
-        "prepublishOnly": "npm run lint && npm run build:publish && npm run test"
+        "benchmark": "pnpm run build && node build/benchmark.mjs",
+        "prepublishOnly": "pnpm run lint && pnpm run build:publish && pnpm run test"
     },
     "devDependencies": {
         "@eslint/js": "^8.56.0",
@@ -65,5 +65,5 @@
         "typescript": "^5.0.4",
         "typescript-eslint": "^7.15.0"
     },
-    "packageManager": "npm@9.8.1"
+    "packageManager": "pnpm@10.33.2"
 }

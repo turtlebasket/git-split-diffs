@@ -10,12 +10,14 @@ GitHub style split (side by side) diffs with syntax highlighting in your termina
 
 ## Usage
 
-This currently requires `node` version 14 or newer to run.
+This currently requires `node` version 18 or newer to run.
 
 ### Install globally
 
 ```sh
 npm install -g git-split-diffs
+# or
+pnpm add -g git-split-diffs
 
 git config --global core.pager "git-split-diffs --color | less -RFX"
 ```
@@ -24,8 +26,26 @@ git config --global core.pager "git-split-diffs --color | less -RFX"
 
 ```sh
 npm install git-split-diffs
+# or
+pnpm add git-split-diffs
 
 git config core.pager "npx git-split-diffs --color | less -RFX"
+# or
+git config core.pager "pnpm exec git-split-diffs --color | less -RFX"
+```
+
+### Install with Nix
+
+```sh
+nix profile install github:banga/git-split-diffs
+
+git config --global core.pager "git-split-diffs --color | less -RFX"
+```
+
+You can also run it directly without installing:
+
+```sh
+git diff | nix run github:banga/git-split-diffs -- --color | less -RFX
 ```
 
 ### Use manually
