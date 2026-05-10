@@ -12,7 +12,7 @@ const execAsync = util.promisify(exec);
 async function main() {
     const { stdout: gitConfigString } = await execAsync('git config -l');
     const gitConfig = getGitConfig(gitConfigString);
-    const config = getConfig(gitConfig);
+    const config = await getConfig(gitConfig);
     const context = await getContextForConfig(
         config,
         chalk,

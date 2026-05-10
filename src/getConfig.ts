@@ -1,5 +1,6 @@
-import { GitConfig } from './getGitConfig';
+import type { ConditionalTheme, GitConfig, ThemeName } from './getGitConfig';
 import { Theme, loadTheme } from './themes';
+import { detectTerminalBackground } from './detectTerminalBackground';
 import * as shiki from 'shiki';
 
 export type Config = Theme & {
@@ -14,8 +15,27 @@ export const CONFIG_DEFAULTS: Omit<Config, keyof Theme> = {
     HIGHLIGHT_LINE_CHANGES: true,
 };
 
-export function getConfig(gitConfig: GitConfig): Config {
-    const theme = loadTheme(gitConfig.THEME_DIRECTORY, gitConfig.THEME_NAME);
+function isConditionalTheme(
+    themeName: ThemeName
+): themeName is ConditionalTheme {
+    return typeof themeName === 'object';
+}
+
+async function resolveThemeName(
+    themeName: ThemeName
+): Promise<string> {
+    if (!isConditionalTheme(themeName)) {
+        return themeName;
+    }
+
+    const mode = await detectTerminalBackground();
+    // Default to dark if detection fails
+    return mode === 'light' ? themeName.light : themeName.dark;
+}
+
+export async function getConfig(gitConfig: GitConfig): Promise<Config> {
+    const resolvedThemeName = await resolveThemeName(gitConfig.THEME_NAME);
+    const theme = loadTheme(gitConfig.THEME_DIRECTORY, resolvedThemeName);
 
     return {
         ...CONFIG_DEFAULTS,

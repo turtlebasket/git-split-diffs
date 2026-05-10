@@ -1,12 +1,19 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+export type ConditionalTheme = {
+    dark: string;
+    light: string;
+};
+
+export type ThemeName = string | ConditionalTheme;
+
 export type GitConfig = {
     MIN_LINE_WIDTH: number;
     WRAP_LINES: boolean;
     HIGHLIGHT_LINE_CHANGES: boolean;
     THEME_DIRECTORY: string;
-    THEME_NAME: string;
+    THEME_NAME: ThemeName;
     SYNTAX_HIGHLIGHTING_THEME?: string;
 };
 
@@ -16,12 +23,44 @@ export const DEFAULT_THEME_DIRECTORY = path.resolve(
     '..',
     'themes'
 );
-export const DEFAULT_THEME_NAME = 'dark';
+export const DEFAULT_THEME_NAME: ConditionalTheme = {
+    dark: 'dark',
+    light: 'light',
+};
 
 const GIT_CONFIG_KEY_PREFIX = 'split-diffs';
 const GIT_CONFIG_LINE_REGEX = new RegExp(
     `${GIT_CONFIG_KEY_PREFIX}\\.([^=]+)=(.*)`
 );
+
+/**
+ * Parse a theme-name value, which can be either:
+ * - A plain theme name: "arctic"
+ * - A conditional theme: "dark:solarized-dark,light:solarized-light"
+ */
+export function parseThemeName(value: string): ThemeName {
+    if (value === 'auto') {
+        return DEFAULT_THEME_NAME;
+    }
+
+    if (value.includes(':')) {
+        const parts = value.split(',').map((s) => s.trim());
+        let dark: string | undefined;
+        let light: string | undefined;
+        for (const part of parts) {
+            const [prefix, name] = part.split(':').map((s) => s.trim());
+            if (prefix === 'dark') {
+                dark = name;
+            } else if (prefix === 'light') {
+                light = name;
+            }
+        }
+        if (dark && light) {
+            return { dark, light };
+        }
+    }
+    return value;
+}
 
 function extractFromGitConfigString(configString: string) {
     const rawConfig: Record<string, string> = {};
@@ -55,7 +94,9 @@ export function getGitConfig(configString: string): GitConfig {
         HIGHLIGHT_LINE_CHANGES: rawConfig['highlight-line-changes'] !== 'false',
         THEME_DIRECTORY:
             rawConfig['theme-directory'] ?? DEFAULT_THEME_DIRECTORY,
-        THEME_NAME: rawConfig['theme-name'] ?? DEFAULT_THEME_NAME,
+        THEME_NAME: rawConfig['theme-name']
+            ? parseThemeName(rawConfig['theme-name'])
+            : DEFAULT_THEME_NAME,
         SYNTAX_HIGHLIGHTING_THEME: rawConfig['syntax-highlighting-theme'],
     };
 }

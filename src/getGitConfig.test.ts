@@ -67,4 +67,48 @@ split-diffs.theme-name=baz
             THEME_NAME: 'baz',
         });
     });
+
+    test('conditional theme name', () => {
+        expect(
+            getGitConfig(`
+split-diffs.theme-name=dark:solarized-dark,light:solarized-light
+            `)
+        ).toEqual({
+            ...DEFAULT_CONFIG,
+            THEME_NAME: {
+                dark: 'solarized-dark',
+                light: 'solarized-light',
+            },
+        });
+    });
+
+    test('conditional theme name with reversed order', () => {
+        expect(
+            getGitConfig(`
+split-diffs.theme-name=light:github-light,dark:github-dark-dim
+            `)
+        ).toEqual({
+            ...DEFAULT_CONFIG,
+            THEME_NAME: {
+                dark: 'github-dark-dim',
+                light: 'github-light',
+            },
+        });
+    });
+
+    test('default theme name is conditional', () => {
+        const config = getGitConfig('');
+        expect(config.THEME_NAME).toEqual({
+            dark: 'dark',
+            light: 'light',
+        });
+    });
+
+    test('auto theme name uses the default conditional theme', () => {
+        expect(
+            getGitConfig(`
+split-diffs.theme-name=auto
+            `)
+        ).toEqual(DEFAULT_CONFIG);
+    });
 });
