@@ -24,8 +24,8 @@ export const DEFAULT_THEME_DIRECTORY = path.resolve(
     'themes'
 );
 export const DEFAULT_THEME_NAME: ConditionalTheme = {
-    dark: 'dark',
-    light: 'light',
+    dark: 'transparent-dark',
+    light: 'transparent-light',
 };
 
 const GIT_CONFIG_KEY_PREFIX = 'split-diffs';

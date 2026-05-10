@@ -99,8 +99,8 @@ split-diffs.theme-name=light:github-light,dark:github-dark-dim
     test('default theme name is conditional', () => {
         const config = getGitConfig('');
         expect(config.THEME_NAME).toEqual({
-            dark: 'dark',
-            light: 'light',
+            dark: 'transparent-dark',
+            light: 'transparent-light',
         });
     });
 

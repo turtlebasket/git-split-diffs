@@ -111,20 +111,36 @@ This defaults to `80`, so screens below `160` characters will display unified di
 
 ## Themes
 
-By default, git-split-diffs queries your terminal background color and chooses `dark` or `light`. You can force a single theme or configure separate dark/light themes with:
+By default, git-split-diffs queries your terminal background color and chooses `transparent-dark` or `transparent-light`. You can force a single theme or configure separate dark/light themes with:
 
 ```
 git config split-diffs.theme-name <name>
 git config split-diffs.theme-name "dark:<dark-theme>,light:<light-theme>"
 ```
 
-Use `auto` to restore the default automatic `dark`/`light` selection:
+Use `auto` to restore the default automatic transparent dark/light selection:
 
 ```
 git config split-diffs.theme-name auto
 ```
 
 You can pick between several [themes](themes/):
+
+### Transparent Dark
+
+This is the default dark theme.
+
+```
+git config split-diffs.theme-name transparent-dark
+```
+
+### Transparent Light
+
+This is the default light theme.
+
+```
+git config split-diffs.theme-name transparent-light
+```
 
 ### Arctic
 
