@@ -83,6 +83,43 @@ git config --global core.pager "git-split-diffs --color | less -+LFX"
 
 (note the difference from the main configuration with the added `+` to the `less` command)
 
+### Navigate between files
+
+`less` can use the `■■` file-heading marker to jump directly to the next or
+previous file. Create a dedicated [lesskey source file](https://man7.org/linux/man-pages/man1/lesskey.1.html)
+so the bindings only affect the `git-split-diffs` pager:
+
+```sh
+mkdir -p ~/.config/git-split-diffs
+cat > ~/.config/git-split-diffs/lesskey.source <<'EOF'
+#command
+f  forw-search \^ ■■ \n
+F  back-search \^ ■■ \n
+EOF
+
+lesskey -o ~/.config/git-split-diffs/lesskey \
+  ~/.config/git-split-diffs/lesskey.source
+```
+
+Point only the Git pager at that compiled lesskey file and add `-A -G -j2`:
+
+```sh
+git config --global core.pager \
+  "git-split-diffs --color | less --lesskey-file=$HOME/.config/git-split-diffs/lesskey -A -G -j2 -+LFX"
+```
+
+Press `f` to go down one file and `F` to go up one file. The options make
+searches advance past the current file, suppress match highlighting, and
+position the heading on the second screen line so its upper divider sits at the
+top edge.
+
+The anchored `^ ■■ ` pattern matches the exact file-heading prefix rather than
+arbitrary square characters in diff content.
+
+These entries only replace the bindings for `f` and `F`; all other commands
+continue to use the default `less` bindings. Omit `#stop` from the file to
+preserve those defaults.
+
 ### Syntax highlighting
 
 Syntax highlighting is supported via [shiki](https://github.com/shikijs/shiki/), which uses the same grammars and themes as vscode. Each theme specifies a default syntax highlighting theme to use, which can be overridden by:
